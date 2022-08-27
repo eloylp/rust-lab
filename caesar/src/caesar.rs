@@ -66,91 +66,91 @@ mod tests {
     #[test]
     fn it_encrypts_basic_string() {
         let result = caesar("ABC", 1, Mode::Encrypt);
-        assert_eq!(result, "BCD");
+        assert_eq!("BCD", result);
     }
 
     #[test]
     fn it_decrypts_basic_string() {
         let result = caesar("BCD", 1, Mode::Decrypt);
-        assert_eq!(result, "ABC");
+        assert_eq!("ABC", result);
     }
 
     #[test]
     fn it_ignores_but_keeps_non_alphabet_characters() {
         let result = caesar("(ABC)D", 1, Mode::Encrypt);
-        assert_eq!(result, "(BCD)E");
+        assert_eq!("(BCD)E", result);
     }
 
     #[test]
     fn it_respects_spaces() {
         let result = caesar("A B C", 1, Mode::Encrypt);
-        assert_eq!(result, "B C D");
+        assert_eq!("B C D", result);
     }
 
     #[test]
     fn it_respects_multiline() {
         let result = caesar("A \n B \n C", 1, Mode::Encrypt);
-        assert_eq!(result, "B \n C \n D");
+        assert_eq!("B \n C \n D", result);
     }
 
     #[test]
     fn it_respects_capitalization() {
         let result = caesar("ABC", 1, Mode::Encrypt);
-        assert_eq!(result, "BCD");
+        assert_eq!("BCD", result);
 
         let result = caesar("abc", 1, Mode::Encrypt);
-        assert_eq!(result, "bcd");
+        assert_eq!("bcd", result);
     }
 
     #[test]
     fn it_ignores_but_keeps_utf8_chars() {
         let result = caesar("ЗaЗ", 1, Mode::Encrypt);
-        assert_eq!(result, "ЗbЗ")
+        assert_eq!("ЗbЗ", result)
     }
 
     #[test]
     fn it_handles_last_alpha_pos_encrypt() {
         let result = caesar("ABC", 26, Mode::Encrypt);
-        assert_eq!(result, "ABC");
+        assert_eq!("ABC", result);
     }
 
     #[test]
     fn it_handles_last_alpha_pos_decrypt() {
         let result = caesar("ABC", 26, Mode::Decrypt);
-        assert_eq!(result, "ABC");
+        assert_eq!("ABC", result);
     }
 
     #[test]
     // Letters close to the end and displacement exceeds last alpha.
     fn it_handles_relative_upper_overflow() {
         let result = caesar("XY", 3, Mode::Encrypt);
-        assert_eq!(result, "AB");
+        assert_eq!("AB", result);
     }
 
     #[test]
     // Letters close to the end and displacement exceeds last alpha.
     fn it_handles_relative_lower_overflow() {
         let result = caesar("BC", 3, Mode::Decrypt);
-        assert_eq!(result, "YZ");
+        assert_eq!("YZ", result);
     }
 
     #[test]
     // Two times the alphabet + 2 (forward).
     fn it_handles_upper_bound_overflow() {
         let result = caesar("ABC", 54, Mode::Encrypt);
-        assert_eq!(result, "CDE");
+        assert_eq!("CDE", result);
     }
 
     #[test]
     // Two times the alphabet + 3 (backward).
     fn it_handles_lower_bound_overflow() {
         let result = caesar("ABC", 55, Mode::Decrypt);
-        assert_eq!(result, "XYZ");
+        assert_eq!("XYZ", result);
     }
 
     #[test]
     fn it_returns_same_on_no_shift() {
         let result = caesar("ABC", 0, Mode::Encrypt);
-        assert_eq!(result, "ABC");
+        assert_eq!("ABC", result);
     }
 }
