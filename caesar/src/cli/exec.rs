@@ -4,9 +4,15 @@ use std::io::{BufRead, Write};
 
 use crate::{caesar, cli};
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
 pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), Box<dyn Error>>
     where R: BufRead, W: Write {
     let args = cli::args::parse(args)?;
+    if args.version {
+        writer.write(format!("{}{}\n", "v", VERSION).as_bytes())?;
+        return Ok(());
+    }
     let mut input = String::new();
     if args.input == "" {
         reader.read_to_string(&mut input)?;
@@ -33,7 +39,7 @@ pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), B
 mod test {
     use uuid::Uuid;
 
-    use crate::cli::exec::with;
+    use crate::cli::exec::{VERSION, with};
 
     #[test]
     fn it_uses_stdin_stdout() {
@@ -82,5 +88,19 @@ mod test {
 
     fn tmp_path() -> String {
         format!("{}{}{}", "/tmp/rust-test-", Uuid::new_v4(), ".txt")
+    }
+
+    #[test]
+    fn it_shows_version() {
+        let args = vec![
+            "-v".to_string(),
+        ];
+        let input: &[u8] = b"";
+        let mut output = Vec::new();
+
+        with(args.as_slice(), input, &mut output).unwrap();
+
+        let output = String::from_utf8(output).unwrap();
+        assert_eq!(format!("{}{}\n", "v", VERSION), output)
     }
 }

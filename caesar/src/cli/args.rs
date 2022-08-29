@@ -12,11 +12,12 @@ encryption mode are assumed.
 
 Arguments:
 
--h     Shows this menu
+-h     Shows this menu.
+-v     Shows the version.
 -k     The key, or positive shift number of the cipher (mandatory). Max is a 6 digit number.
 -o     Write results to specified file.
 -i     Specify path to input file.
--e     Encryption mode. (default)
+-e     Encryption mode. (default).
 -d     Decryption mode.
 
 Here's a full example command:
@@ -30,6 +31,7 @@ pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
     }
     let mut parsed_args = Args {
         help: false,
+        version: false,
         key: 0,
         input: "".to_string(),
         output: "".to_string(),
@@ -40,6 +42,10 @@ pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
     for (i, arg) in args.iter().enumerate() {
         match arg.as_str() {
             "-h" => return Err(ArgsError),
+            "-v" => {
+                parsed_args.version = true;
+                return Ok(parsed_args);
+            }
             "-k" => {
                 let arg_val = i + 1;
                 if args.get(arg_val) == None {
@@ -81,6 +87,7 @@ pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
 
 #[derive(Debug)]
 pub struct Args {
+    pub version: bool,
     pub help: bool,
     pub key: i32,
     pub output: String,
@@ -107,13 +114,13 @@ pub struct ArgsError;
 
 impl Display for ArgsError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", HELP_TEMPLATE)
+        write!(f, "{}", HELP)
     }
 }
 
 impl Error for ArgsError {
     fn description(&self) -> &str {
-        HELP_TEMPLATE
+        HELP
     }
 }
 
@@ -163,6 +170,18 @@ mod test {
         ];
         let result = parse(&args).unwrap_err();
         assert_eq!(ArgsError, result);
+    }
+
+    #[test]
+    fn it_exits_if_version_present() {
+        let args = vec![
+            "-v".to_string(),
+            "-k".to_string(),
+            "10".to_string(),
+        ];
+        let result = parse(&args).unwrap();
+        assert_eq!(true, result.version);
+        assert_eq!(0, result.key);
     }
 
     #[test]

@@ -52,11 +52,12 @@ encryption mode are assumed.
 
 Arguments:
 
--h     Shows this menu
+-h     Shows this menu.
+-v     Shows the version.
 -k     The key, or positive shift number of the cipher (mandatory). Max is a 6 digit number.
 -o     Write results to specified file.
 -i     Specify path to input file.
--e     Encryption mode. (default)
+-e     Encryption mode. (default).
 -d     Decryption mode.
 
 Here's a full example command:
