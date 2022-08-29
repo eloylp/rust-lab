@@ -8,25 +8,28 @@ pub enum Mode {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct NegativeKeyError;
+pub struct KeyError;
 
-const NEGATIVE_KEY_ERROR_MSG: &'static str = "the key parameter must be a positive number.";
+const KEY_ERROR_MSG: &'static str = "the key parameter must be a positive number between 0 - 999999.";
 
-impl Display for NegativeKeyError {
+impl Display for KeyError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", NEGATIVE_KEY_ERROR_MSG)
+        write!(f, "{}", KEY_ERROR_MSG)
     }
 }
 
-impl Error for NegativeKeyError {
+impl Error for KeyError {
     fn description(&self) -> &str {
-        NEGATIVE_KEY_ERROR_MSG
+        KEY_ERROR_MSG
     }
 }
 
-pub fn caesar(input: &str, key: i32, dir: Mode) -> Result<String, NegativeKeyError> {
+pub fn caesar(input: &str, key: i32, dir: Mode) -> Result<String, KeyError> {
     if key.is_negative() {
-        return Err(NegativeKeyError);
+        return Err(KeyError);
+    }
+    if key > 999_999 {
+        return Err(KeyError);
     }
 
     let alphabet_pos = [
@@ -84,7 +87,7 @@ fn calc_index_backward(letter_index: &usize, key: i32) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use crate::caesar::{caesar, Mode, NegativeKeyError};
+    use crate::caesar::{caesar, KeyError, Mode};
 
     #[test]
     fn it_encrypts_basic_string() {
@@ -180,12 +183,24 @@ mod tests {
     #[test]
     fn it_returns_error_on_negative_key() {
         let result = caesar("ABC", -1, Mode::Encrypt).unwrap_err();
-        assert_eq!(NegativeKeyError, result);
+        assert_eq!(KeyError, result);
     }
 
     #[test]
-    fn errors_negative_key_has_display() {
-        let error = NegativeKeyError {};
-        assert_eq!("the key parameter must be a positive number.", format!("{}", error));
+    fn errors_key_has_display() {
+        let error = KeyError {};
+        assert_eq!("the key parameter must be a positive number between 0 - 999999.", format!("{}", error));
+    }
+
+    #[test]
+    fn it_returns_error_on_max_key_size() {
+        let result = caesar("ABC", 1_000_000, Mode::Encrypt).unwrap_err();
+        assert_eq!(KeyError, result);
+    }
+
+    #[test]
+    fn it_deals_with_max_key_size() {
+        let result = caesar("ABC", 999_999, Mode::Encrypt).unwrap();
+        assert_eq!("NOP", result);
     }
 }

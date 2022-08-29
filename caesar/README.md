@@ -23,7 +23,7 @@ Images by <a href="https://en.wikipedia.org/wiki/Caesar_cipher">Wikipedia</a>
 * Encrypt from stdin.
 * Encrypt from an input file.
 * Output will be to the `stdout` by default. Users can also specify an output file.
-* It supports overflow (more than 26 shifts) for the key.
+* It supports overflow (more than 26 shifts) for the key. Max is a 6-digit number.
 * It loads everything into memory. No streaming support, yet.
 
 ### How to install
@@ -53,7 +53,7 @@ encryption mode are assumed.
 Arguments:
 
 -h     Shows this menu
--k     The key, or positive shift number of the cipher (mandatory).
+-k     The key, or positive shift number of the cipher (mandatory). Max is a 6 digit number.
 -o     Write results to specified file.
 -i     Specify path to input file.
 -e     Encryption mode. (default)
