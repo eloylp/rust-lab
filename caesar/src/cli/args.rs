@@ -5,7 +5,7 @@ use std::fmt::{Display, Formatter};
 const HELP: &str = "🏛 Caesar Cipher 🏛
 
 WARNING: Users are encouraged to use modern cryptography instead of this tool.
-This was only done for academic purposes with ❤ 🦀
+This was made for academic purposes with ❤ 🦀
 
 Only -s argument is mandatory. If no other argument is provided stdin/stdout and
 encryption mode are assumed.
