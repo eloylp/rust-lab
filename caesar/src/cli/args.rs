@@ -24,46 +24,6 @@ Here's a full example command:
 $ caesar -k 10 -i input.txt -o output.txt -e
 ";
 
-
-#[derive(Debug)]
-pub struct Args {
-    pub help: bool,
-    pub key: i32,
-    pub output: String,
-    pub input: String,
-    pub encrypt: bool,
-    pub decrypt: bool,
-}
-
-impl fmt::Display for Args {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Received arguments are:
-        -h {}
-        -k {}
-        -o {}
-        -i {}
-        -e {}
-        -d {}
-        ", self.help, self.key, self.output, self.input, self.encrypt, self.decrypt)
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub struct ArgsError;
-
-impl Display for ArgsError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", HELP)
-    }
-}
-
-impl Error for ArgsError {
-    fn description(&self) -> &str {
-        HELP
-    }
-}
-
-
 type Result<T> = std::result::Result<T, ArgsError>;
 
 pub(super) fn parse(args: &[String]) -> Result<Args> {
@@ -121,6 +81,43 @@ pub(super) fn parse(args: &[String]) -> Result<Args> {
     return Ok(parsed_args);
 }
 
+#[derive(Debug)]
+pub struct Args {
+    pub help: bool,
+    pub key: i32,
+    pub output: String,
+    pub input: String,
+    pub encrypt: bool,
+    pub decrypt: bool,
+}
+
+impl fmt::Display for Args {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "Received arguments are:
+        -h {}
+        -k {}
+        -o {}
+        -i {}
+        -e {}
+        -d {}
+        ", self.help, self.key, self.output, self.input, self.encrypt, self.decrypt)
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ArgsError;
+
+impl Display for ArgsError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", HELP_TEMPLATE)
+    }
+}
+
+impl Error for ArgsError {
+    fn description(&self) -> &str {
+        HELP_TEMPLATE
+    }
+}
 
 #[cfg(test)]
 mod test {
