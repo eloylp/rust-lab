@@ -24,9 +24,7 @@ Here's a full example command:
 $ caesar -k 10 -i input.txt -o output.txt -e
 ";
 
-type Result<T> = std::result::Result<T, ArgsError>;
-
-pub(super) fn parse(args: &[String]) -> Result<Args> {
+pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
     if args.is_empty() {
         return Err(ArgsError);
     }
@@ -91,7 +89,7 @@ pub struct Args {
     pub decrypt: bool,
 }
 
-impl fmt::Display for Args {
+impl Display for Args {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Received arguments are:
         -h {}
