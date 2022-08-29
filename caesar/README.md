@@ -1,7 +1,8 @@
 ## 🏛 Caesar Cipher CLI 🏛
 
 This is an implementation of the historic [caesar cipher](https://en.wikipedia.org/wiki/Caesar_cipher). This serves mostly as an academic
-exercise which helped me to learn many of the Rust topics. In order to maximize learnings, a decision to just use the standard library was made.
+exercise which helped me to learn many of the Rust topics. In order to maximize learnings, a decision to just use the standard library was
+made.
 
 ⚠ **Important**: Users are encouraged to generally use modern cryptography instead ⚠
 
@@ -18,6 +19,7 @@ Images by <a href="https://en.wikipedia.org/wiki/Caesar_cipher">Wikipedia</a>
 
 ### Features
 
+* Only supports ascii alphabet. Other characters will be just omitted for processing, but included in the output.
 * Encrypt from stdin.
 * Encrypt from an input file.
 * Output will be to the `stdout` by default. Users can also specify an output file.
