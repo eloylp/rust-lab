@@ -7,13 +7,13 @@ const HELP: &str = "🏛 Caesar Cipher 🏛
 WARNING: Users are encouraged to use modern cryptography instead of this tool.
 This was made for academic purposes with ❤ 🦀
 
-Only -s argument is mandatory. If no other argument is provided stdin/stdout and
+Only -k argument is mandatory. If no other argument is provided stdin/stdout and
 encryption mode are assumed.
 
 Arguments:
 
 -h     Shows this menu
--s     The shift, or key of the cipher (mandatory).
+-k     The key, or positive shift number of the cipher (mandatory).
 -o     Write results to specified file.
 -i     Specify path to input file.
 -e     Encryption mode. (default)
@@ -21,14 +21,14 @@ Arguments:
 
 Here's a full example command:
 
-$ caesar -s 10 -i input.txt -o output.txt -e
+$ caesar -k 10 -i input.txt -o output.txt -e
 ";
 
 
 #[derive(Debug)]
 pub struct Args {
     pub help: bool,
-    pub shift: i32,
+    pub key: i32,
     pub output: String,
     pub input: String,
     pub encrypt: bool,
@@ -39,12 +39,12 @@ impl fmt::Display for Args {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "Received arguments are:
         -h {}
-        -s {}
+        -k {}
         -o {}
         -i {}
         -e {}
         -d {}
-        ", self.help, self.shift, self.output, self.input, self.encrypt, self.decrypt)
+        ", self.help, self.key, self.output, self.input, self.encrypt, self.decrypt)
     }
 }
 
@@ -72,7 +72,7 @@ pub(super) fn parse(args: &[String]) -> Result<Args> {
     }
     let mut parsed_args = Args {
         help: false,
-        shift: 0,
+        key: 0,
         input: "".to_string(),
         output: "".to_string(),
         encrypt: false,
@@ -82,13 +82,13 @@ pub(super) fn parse(args: &[String]) -> Result<Args> {
     for (i, arg) in args.iter().enumerate() {
         match arg.as_str() {
             "-h" => return Err(ArgsError),
-            "-s" => {
+            "-k" => {
                 let arg_val = i + 1;
                 if args.get(arg_val) == None {
                     return Err(ArgsError);
                 }
                 match args[arg_val].parse() {
-                    Ok(val) => parsed_args.shift = val,
+                    Ok(val) => parsed_args.key = val,
                     Err(_error) => return Err(ArgsError)
                 }
             }
@@ -129,7 +129,7 @@ mod test {
     #[test]
     fn it_parses_args_for_encryption() {
         let args = vec![
-            "-s".to_string(),
+            "-k".to_string(),
             "10".to_string(),
             "-i".to_string(),
             "/home/user/in.txt".to_string(),
@@ -140,7 +140,7 @@ mod test {
 
         let result = parse(&args).unwrap();
 
-        assert_eq!(10, result.shift);
+        assert_eq!(10, result.key);
         assert_eq!("/home/user/in.txt", result.input);
         assert_eq!("/home/user/out.txt", result.output);
         assert_eq!(true, result.encrypt);
@@ -149,13 +149,13 @@ mod test {
     #[test]
     fn it_parses_args_for_decryption() {
         let args = vec![
-            "-s".to_string(),
+            "-k".to_string(),
             "10".to_string(),
             "-d".to_string(),
         ];
         let result = parse(&args).unwrap();
 
-        assert_eq!(10, result.shift);
+        assert_eq!(10, result.key);
         assert_eq!(true, result.decrypt);
     }
 
@@ -163,7 +163,7 @@ mod test {
     fn it_exits_if_help_present() {
         let args = vec![
             "-h".to_string(),
-            "-s".to_string(),
+            "-k".to_string(),
             "10".to_string(),
         ];
         let result = parse(&args).unwrap_err();
@@ -171,9 +171,9 @@ mod test {
     }
 
     #[test]
-    fn it_returns_error_when_missing_shift_param_value() {
+    fn it_returns_error_when_missing_key_param_value() {
         let args = vec![
-            "-s".to_string(),
+            "-k".to_string(),
         ];
         let result = parse(&args).unwrap_err();
         assert_eq!(ArgsError, result)
@@ -207,7 +207,7 @@ mod test {
     #[test]
     fn it_returns_error_when_cannot_parse_arg_val() {
         let args = vec![
-            "-s".to_string(),
+            "-k".to_string(),
             "aaa".to_string(),
         ];
         let res = parse(&args).unwrap_err();

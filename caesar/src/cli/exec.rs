@@ -19,7 +19,7 @@ pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), B
     } else {
         mode = caesar::Mode::Encrypt
     }
-    let result = caesar::caesar(input.as_str(), args.shift, mode)?;
+    let result = caesar::caesar(input.as_str(), args.key, mode)?;
     if args.output != "" {
         fs::write(args.output, result)?;
     } else {
@@ -38,7 +38,7 @@ mod test {
     #[test]
     fn it_uses_stdin_stdout() {
         let args = vec![
-            "-s".to_string(),
+            "-k".to_string(),
             "1".to_string(),
         ];
         let input: &[u8] = b"Learning Rust";
@@ -67,7 +67,7 @@ mod test {
             input_file_path.to_owned(),
             "-o".to_string(),
             output_file_path.to_owned(),
-            "-s".to_string(),
+            "-k".to_string(),
             "1".to_string(),
         ];
 

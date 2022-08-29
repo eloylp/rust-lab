@@ -8,25 +8,25 @@ pub enum Mode {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct NegativeShiftError;
+pub struct NegativeKeyError;
 
-const NEGATIVE_SHIFT_ERROR_MSG: &'static str = "the shift parameter must be positive.";
+const NEGATIVE_KEY_ERROR_MSG: &'static str = "the key parameter must be a positive number.";
 
-impl Display for NegativeShiftError {
+impl Display for NegativeKeyError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", NEGATIVE_SHIFT_ERROR_MSG)
+        write!(f, "{}", NEGATIVE_KEY_ERROR_MSG)
     }
 }
 
-impl Error for NegativeShiftError {
+impl Error for NegativeKeyError {
     fn description(&self) -> &str {
-        NEGATIVE_SHIFT_ERROR_MSG
+        NEGATIVE_KEY_ERROR_MSG
     }
 }
 
-pub fn caesar(input: &str, shift: i32, dir: Mode) -> Result<String, NegativeShiftError> {
-    if shift.is_negative() {
-        return Err(NegativeShiftError);
+pub fn caesar(input: &str, key: i32, dir: Mode) -> Result<String, NegativeKeyError> {
+    if key.is_negative() {
+        return Err(NegativeKeyError);
     }
 
     let alphabet_pos = [
@@ -50,8 +50,8 @@ pub fn caesar(input: &str, shift: i32, dir: Mode) -> Result<String, NegativeShif
             Some(index) => {
                 let calc_index: usize;
                 match dir {
-                    Mode::Encrypt => calc_index = calc_index_forward(index, shift),
-                    Mode::Decrypt => calc_index = calc_index_backward(index, shift)
+                    Mode::Encrypt => calc_index = calc_index_forward(index, key),
+                    Mode::Decrypt => calc_index = calc_index_backward(index, key)
                 }
                 let matched_char = alphabet_pos.get(calc_index).unwrap().to_string();
                 if ic.is_uppercase() {
@@ -66,15 +66,15 @@ pub fn caesar(input: &str, shift: i32, dir: Mode) -> Result<String, NegativeShif
     Ok(result)
 }
 
-fn calc_index_forward(letter_index: &usize, shift: i32) -> usize {
+fn calc_index_forward(letter_index: &usize, key: i32) -> usize {
     let li = *letter_index as i32;
-    let result = (li + shift) % 26;
+    let result = (li + key) % 26;
     return result as usize;
 }
 
-fn calc_index_backward(letter_index: &usize, shift: i32) -> usize {
+fn calc_index_backward(letter_index: &usize, key: i32) -> usize {
     let li = *letter_index as i32;
-    let mut result = (li - shift) % 26;
+    let mut result = (li - key) % 26;
     if result.is_negative() {
         result = 26 + result
     }
@@ -84,7 +84,7 @@ fn calc_index_backward(letter_index: &usize, shift: i32) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use crate::caesar::{caesar, Mode, NegativeShiftError};
+    use crate::caesar::{caesar, Mode, NegativeKeyError};
 
     #[test]
     fn it_encrypts_basic_string() {
@@ -172,20 +172,20 @@ mod tests {
     }
 
     #[test]
-    fn it_returns_same_on_no_shift() {
+    fn it_returns_same_on_no_key() {
         let result = caesar("ABC", 0, Mode::Encrypt).unwrap();
         assert_eq!("ABC", result);
     }
 
     #[test]
-    fn it_returns_error_on_negative_shift() {
+    fn it_returns_error_on_negative_key() {
         let result = caesar("ABC", -1, Mode::Encrypt).unwrap_err();
-        assert_eq!(NegativeShiftError, result);
+        assert_eq!(NegativeKeyError, result);
     }
 
     #[test]
-    fn errors_negative_shift_has_display() {
-        let error = NegativeShiftError {};
-        assert_eq!("the shift parameter must be positive.", format!("{}", error));
+    fn errors_negative_key_has_display() {
+        let error = NegativeKeyError {};
+        assert_eq!("the key parameter must be a positive number.", format!("{}", error));
     }
 }
