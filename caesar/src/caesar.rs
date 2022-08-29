@@ -10,15 +10,17 @@ pub enum Mode {
 #[derive(Debug, PartialEq)]
 pub struct NegativeShiftError;
 
+const NEGATIVE_SHIFT_ERROR_MSG: &'static str = "the shift parameter must be positive.";
+
 impl Display for NegativeShiftError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string())
+        write!(f, "{}", NEGATIVE_SHIFT_ERROR_MSG)
     }
 }
 
 impl Error for NegativeShiftError {
     fn description(&self) -> &str {
-        "the shift parameter must be positive."
+        NEGATIVE_SHIFT_ERROR_MSG
     }
 }
 
@@ -179,5 +181,11 @@ mod tests {
     fn it_returns_error_on_negative_shift() {
         let result = caesar("ABC", -1, Mode::Encrypt).unwrap_err();
         assert_eq!(NegativeShiftError, result);
+    }
+
+    #[test]
+    fn errors_negative_shift_has_display() {
+        let error = NegativeShiftError {};
+        assert_eq!("the shift parameter must be positive.", format!("{}", error));
     }
 }
