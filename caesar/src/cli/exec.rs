@@ -25,7 +25,8 @@ pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), B
     } else {
         mode = caesar::Mode::Encrypt
     }
-    let result = caesar::caesar(input.as_str(), args.key, mode)?;
+    let caesar = caesar::Caesar::new();
+    let result = caesar.exec(input.as_str(), args.key, mode)?;
     if args.output != "" {
         fs::write(args.output, result)?;
     } else {
