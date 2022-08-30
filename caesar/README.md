@@ -19,11 +19,11 @@ Images by <a href="https://en.wikipedia.org/wiki/Caesar_cipher">Wikipedia</a>
 
 ### Features
 
-* Only supports ascii alphabet. Other characters will be just omitted for processing, but included in the output.
+* Support for the ascii alphabet. Other characters will be just omitted for processing, but included in the output.
 * Encrypt from stdin.
 * Encrypt from an input file.
-* Output will be to the `stdout` by default. Users can also specify an output file.
-* It supports overflow (more than 26 shifts) for the key. Max is a 6-digit number.
+* Output will be written to `stdout` by default. Users can also specify an output file.
+* It supports positional overflow in the shift operation. The key (shift) can be a 6-digit number at a maximum.
 * It loads everything into memory. No streaming support, yet.
 
 ### How to install
@@ -101,7 +101,7 @@ $ caesar -i encrypted.txt -k 1 -d
 ABC
 ```
 
-### Reading from input file, write result to output file
+#### Reading from input file, write result to output file
 
 For encryption:
 
