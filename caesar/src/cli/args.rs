@@ -82,7 +82,7 @@ pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
     if parsed_args.encrypt && parsed_args.decrypt {
         return Err(ArgsError);
     }
-    return Ok(parsed_args);
+    Ok(parsed_args)
 }
 
 #[derive(Debug)]
@@ -109,7 +109,7 @@ impl Display for Args {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ArgsError;
 
 impl Display for ArgsError {

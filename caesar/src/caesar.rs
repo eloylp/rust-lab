@@ -38,13 +38,12 @@ impl Caesar {
 
         for ic in input.chars() {
             let ic_lower: Vec<_> = ic.to_lowercase().collect();
-            match self.alphabet_dic.get(&ic_lower.get(0).unwrap()) {
+            match self.alphabet_dic.get(ic_lower.first().unwrap()) {
                 Some(index) => {
-                    let calc_index: usize;
-                    match dir {
-                        Mode::Encrypt => calc_index = calc_index_forward(index, key),
-                        Mode::Decrypt => calc_index = calc_index_backward(index, key)
-                    }
+                    let calc_index: usize = match dir {
+                        Mode::Encrypt => calc_index_forward(index, key),
+                        Mode::Decrypt => calc_index_backward(index, key)
+                    };
                     let matched_char = self.alphabet_pos.get(calc_index).unwrap().to_string();
                     if ic.is_uppercase() {
                         result.push_str(matched_char.to_uppercase().as_str());
@@ -64,10 +63,10 @@ pub enum Mode {
     Decrypt,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct KeyError;
 
-const KEY_ERROR_MSG: &'static str = "the key parameter must be a positive number between 0 - 999999.";
+const KEY_ERROR_MSG: &str = "the key parameter must be a positive number between 0 - 999999.";
 
 impl Display for KeyError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -85,16 +84,16 @@ impl Error for KeyError {
 fn calc_index_forward(letter_index: &usize, key: i32) -> usize {
     let li = *letter_index as i32;
     let result = (li + key) % 26;
-    return result as usize;
+    result as usize
 }
 
 fn calc_index_backward(letter_index: &usize, key: i32) -> usize {
     let li = *letter_index as i32;
     let mut result = (li - key) % 26;
     if result.is_negative() {
-        result = 26 + result
+        result += 26
     }
-    return result as usize;
+    result as usize
 }
 
 

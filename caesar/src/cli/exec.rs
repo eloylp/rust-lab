@@ -4,33 +4,32 @@ use std::io::{BufRead, Write};
 
 use crate::{caesar, cli};
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), Box<dyn Error>>
     where R: BufRead, W: Write {
     let args = cli::args::parse(args)?;
     if args.version {
-        writer.write(format!("{}{}\n", "v", VERSION).as_bytes())?;
+        writer.write_all(format!("{}{}\n", "v", VERSION).as_bytes())?;
         return Ok(());
     }
     let mut input = String::new();
-    if args.input == "" {
+    if args.input.is_empty() {
         reader.read_to_string(&mut input)?;
     } else {
         input = fs::read_to_string(args.input)?;
     }
-    let mode: caesar::Mode;
-    if args.decrypt {
-        mode = caesar::Mode::Decrypt
+    let mode: caesar::Mode = if args.decrypt {
+        caesar::Mode::Decrypt
     } else {
-        mode = caesar::Mode::Encrypt
-    }
+        caesar::Mode::Encrypt
+    };
     let caesar = caesar::Caesar::new();
     let result = caesar.exec(input.as_str(), args.key, mode)?;
-    if args.output != "" {
+    if !args.output.is_empty() {
         fs::write(args.output, result)?;
     } else {
-        writer.write(result.as_bytes())?;
+        writer.write_all(result.as_bytes())?;
     }
     Ok(())
 }
