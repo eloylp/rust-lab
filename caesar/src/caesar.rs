@@ -41,8 +41,8 @@ impl Caesar {
             match self.alphabet_dic.get(ic_lower.first().unwrap()) {
                 Some(index) => {
                     let calc_index: usize = match dir {
-                        Mode::Encrypt => calc_index_forward(index, key),
-                        Mode::Decrypt => calc_index_backward(index, key)
+                        Mode::Encrypt => self.calc_index_forward(index, key),
+                        Mode::Decrypt => self.calc_index_backward(index, key)
                     };
                     let matched_char = self.alphabet_pos.get(calc_index).unwrap().to_string();
                     if ic.is_uppercase() {
@@ -55,6 +55,21 @@ impl Caesar {
             }
         }
         Ok(result)
+    }
+
+    fn calc_index_forward(&self, letter_index: &usize, key: i32) -> usize {
+        let li = *letter_index as i32;
+        let result = (li + key) % 26;
+        result as usize
+    }
+
+    fn calc_index_backward(&self, letter_index: &usize, key: i32) -> usize {
+        let li = *letter_index as i32;
+        let mut result = (li - key) % 26;
+        if result.is_negative() {
+            result += 26
+        }
+        result as usize
     }
 }
 
@@ -79,23 +94,6 @@ impl Error for KeyError {
         KEY_ERROR_MSG
     }
 }
-
-
-fn calc_index_forward(letter_index: &usize, key: i32) -> usize {
-    let li = *letter_index as i32;
-    let result = (li + key) % 26;
-    result as usize
-}
-
-fn calc_index_backward(letter_index: &usize, key: i32) -> usize {
-    let li = *letter_index as i32;
-    let mut result = (li - key) % 26;
-    if result.is_negative() {
-        result += 26
-    }
-    result as usize
-}
-
 
 #[cfg(test)]
 mod tests {
