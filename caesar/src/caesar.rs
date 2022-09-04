@@ -97,7 +97,7 @@ impl Error for KeyError {
 
 #[cfg(test)]
 mod tests {
-    use crate::caesar::{Caesar, KeyError, Mode};
+    use super::*;
 
     #[test]
     fn it_encrypts_basic_string() {

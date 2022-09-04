@@ -25,7 +25,7 @@ Here's a full example command:
 $ caesar -k 10 -i input.txt -o output.txt -e
 ";
 
-pub(super) fn parse(args: &[String]) -> Result<Args, ArgsError> {
+pub(crate) fn parse(args: &[String]) -> Result<Args, ArgsError> {
     if args.is_empty() {
         return Err(ArgsError);
     }
@@ -126,7 +126,7 @@ impl Error for ArgsError {
 
 #[cfg(test)]
 mod test {
-    use crate::cli::args::{ArgsError, parse};
+    use super::*;
 
     #[test]
     fn it_parses_args_for_encryption() {

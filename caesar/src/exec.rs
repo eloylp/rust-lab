@@ -2,13 +2,13 @@ use std::error::Error;
 use std::fs;
 use std::io::{BufRead, Write};
 
-use crate::{caesar, cli};
+use crate::{args, caesar};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), Box<dyn Error>>
     where R: BufRead, W: Write {
-    let args = cli::args::parse(args)?;
+    let args = args::parse(args)?;
     if args.version {
         writer.write_all(format!("{}{}\n", "v", VERSION).as_bytes())?;
         return Ok(());
@@ -39,7 +39,7 @@ pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), B
 mod test {
     use uuid::Uuid;
 
-    use crate::cli::exec::{VERSION, with};
+    use super::*;
 
     #[test]
     fn it_uses_stdin_stdout() {
@@ -61,7 +61,7 @@ mod test {
         // Prepare files stuff
         let input_file_path = tmp_path();
         let contents: &[u8] = b"Learning Rust";
-        std::fs::write(&input_file_path, contents).unwrap();
+        fs::write(&input_file_path, contents).unwrap();
         let output_file_path = tmp_path();
 
         // No data in stdin/stdout
@@ -80,10 +80,10 @@ mod test {
         with(args.as_slice(), input, &mut output).unwrap();
 
         let expected: &[u8] = b"Mfbsojoh Svtu";
-        assert_eq!(expected, std::fs::read(&output_file_path).unwrap());
+        assert_eq!(expected, fs::read(&output_file_path).unwrap());
 
-        std::fs::remove_file(input_file_path).unwrap();
-        std::fs::remove_file(output_file_path).unwrap()
+        fs::remove_file(input_file_path).unwrap();
+        fs::remove_file(output_file_path).unwrap()
     }
 
     fn tmp_path() -> String {
