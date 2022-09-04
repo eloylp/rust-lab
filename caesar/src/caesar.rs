@@ -1,32 +1,17 @@
-use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
 
-pub struct Caesar {
-    alphabet_pos: [char; 26],
-    alphabet_dic: HashMap<char, usize>,
-}
+pub struct Caesar {}
 
 impl Caesar {
+    const A_UPPERCASE: u8 = b'A';
+    const A_LOWERCASE: u8 = b'a';
+
     pub fn new() -> Self {
-        let alphabet_pos = [
-            'a', 'b', 'c', 'd', 'e',
-            'f', 'g', 'h', 'i', 'j',
-            'k', 'l', 'm', 'n', 'o',
-            'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z'
-        ];
-        let mut alphabet_dic = HashMap::new();
-        for (index, letter) in alphabet_pos.iter().enumerate() {
-            alphabet_dic.insert(*letter, index);
-        }
-        Caesar {
-            alphabet_pos,
-            alphabet_dic,
-        }
+        Caesar {}
     }
 
-    pub fn exec(&self, input: &str, key: i32, dir: Mode) -> Result<String, KeyError> {
+    pub fn exec(&self, input: &str, key: i32, mode: Mode) -> Result<String, KeyError> {
         if key.is_negative() {
             return Err(KeyError);
         }
@@ -37,42 +22,41 @@ impl Caesar {
         let mut result = String::new();
 
         for ic in input.chars() {
-            let ic_lower: Vec<_> = ic.to_lowercase().collect();
-            match self.alphabet_dic.get(ic_lower.first().unwrap()) {
-                Some(index) => {
-                    let calc_index: usize = match dir {
-                        Mode::Encrypt => self.calc_index_forward(index, key),
-                        Mode::Decrypt => self.calc_index_backward(index, key)
-                    };
-                    let matched_char = self.alphabet_pos.get(calc_index).unwrap().to_string();
-                    if ic.is_uppercase() {
-                        result.push_str(matched_char.to_uppercase().as_str());
-                        continue;
+            match ic.is_ascii_alphabetic() {
+                false => result.push(ic),
+                true => {
+                    let mut k = key;
+                    if mode == Mode::Decrypt {
+                        k = -key
                     }
-                    result.push_str(matched_char.as_str());
+                    match ic.is_ascii_uppercase() {
+                        true => {
+                            let start_pos = ic as u8 - Caesar::A_UPPERCASE;
+                            let rotated_char = Caesar::A_UPPERCASE + Caesar::rotate(start_pos as i32, k);
+                            result.push(rotated_char as char)
+                        }
+                        false => {
+                            let start_pos = ic as u8 - Caesar::A_LOWERCASE;
+                            let rotated_char = Caesar::A_LOWERCASE + Caesar::rotate(start_pos as i32, k);
+                            result.push(rotated_char as char)
+                        }
+                    }
                 }
-                None => result.push_str(ic.to_string().as_str())
             }
         }
         Ok(result)
     }
 
-    fn calc_index_forward(&self, letter_index: &usize, key: i32) -> usize {
-        let li = *letter_index as i32;
-        let result = (li + key) % 26;
-        result as usize
-    }
-
-    fn calc_index_backward(&self, letter_index: &usize, key: i32) -> usize {
-        let li = *letter_index as i32;
-        let mut result = (li - key) % 26;
+    fn rotate(start_pos: i32, key: i32) -> u8 {
+        let mut result = (start_pos + key) % 26;
         if result.is_negative() {
             result += 26
         }
-        result as usize
+        result as u8
     }
 }
 
+#[derive(PartialEq)]
 pub enum Mode {
     Encrypt,
     Decrypt,
