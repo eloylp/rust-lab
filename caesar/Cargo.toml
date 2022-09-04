@@ -14,3 +14,10 @@ features = [
     "fast-rng", # Use a faster (but still sufficiently random) RNG
     "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
 ]
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "caesar"
+harness = false
