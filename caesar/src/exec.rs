@@ -3,6 +3,7 @@ use std::fs;
 use std::io::{BufRead, Write};
 
 use crate::{args, caesar};
+use crate::caesar::Caesar;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -24,8 +25,7 @@ pub fn with<R, W>(args: &[String], mut reader: R, mut writer: W) -> Result<(), B
     } else {
         caesar::Mode::Encrypt
     };
-    let caesar = caesar::Caesar::new();
-    let result = caesar.exec(input.as_str(), args.key, mode)?;
+    let result = Caesar::exec(input.as_str(), args.key, mode)?;
     if !args.output.is_empty() {
         fs::write(args.output, result)?;
     } else {
