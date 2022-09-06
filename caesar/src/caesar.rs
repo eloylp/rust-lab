@@ -27,20 +27,22 @@ impl Caesar {
                     }
                     match ic.is_ascii_uppercase() {
                         true => {
-                            let start_pos = ic as u8 - Caesar::A_UPPERCASE;
-                            let rotated_char = Caesar::A_UPPERCASE + Caesar::rotate(start_pos as i32, k);
-                            result.push(rotated_char as char)
+                            result.push(Caesar::rotate_with_base_char(Caesar::A_UPPERCASE, ic, k))
                         }
                         false => {
-                            let start_pos = ic as u8 - Caesar::A_LOWERCASE;
-                            let rotated_char = Caesar::A_LOWERCASE + Caesar::rotate(start_pos as i32, k);
-                            result.push(rotated_char as char)
+                            result.push(Caesar::rotate_with_base_char(Caesar::A_LOWERCASE, ic, k))
                         }
                     }
                 }
             }
         }
         Ok(result)
+    }
+
+    fn rotate_with_base_char(base_char: u8, ic: char, key: i32) -> char {
+        let start_pos = ic as u8 - base_char;
+        let rotated_char = base_char + Caesar::rotate(start_pos as i32, key);
+        rotated_char as char
     }
 
     fn rotate(start_pos: i32, key: i32) -> u8 {
