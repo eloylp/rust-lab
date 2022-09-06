@@ -54,7 +54,7 @@ impl Caesar {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum Mode {
     Encrypt,
     Decrypt,
