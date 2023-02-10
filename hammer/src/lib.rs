@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use clap::{Arg, Command};
 
-async fn hammer_with_args(args: Vec<String>) -> Result<Vec<Stats>, Error> {
+pub async fn hammer_with_args(args: Vec<String>) -> Result<Vec<Stats>, Error> {
     let matches = Command::new("hammer").arg(Arg::new("url").short('u').required(true).long("url"));
 
     let matchs = matches.get_matches_from(args);
@@ -17,12 +17,13 @@ async fn hammer_with_args(args: Vec<String>) -> Result<Vec<Stats>, Error> {
     Ok(stats)
 }
 
-struct Stats {
+#[derive(Debug)]
+pub struct Stats {
     code: u16,
 }
 
 #[derive(Debug)]
-enum Error {
+pub enum Error {
     General(String),
 }
 
