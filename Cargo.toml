@@ -4,6 +4,7 @@ members = [
     "caesar", 
     "hammer", 
     "whiteboard",
+    "api_design"
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
